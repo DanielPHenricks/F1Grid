@@ -3,6 +3,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import { SearchModalComponent } from "../search-modal/search-modal.component";
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
+import { ApiClientService } from '../../services/api-client.service';
 
 @Component({
   selector: 'grid-list',
@@ -22,8 +23,10 @@ export class GridListComponent {
   selectedSquare: number = 0
   gridNumbers: number[] = []
   dialog: any = inject(MatDialog)
+  readonly apiClient: ApiClientService
 
-  public constructor() {
+  public constructor(api: ApiClientService) {
+    this.apiClient = api
     this.gridNumbers = Array.from({length:9}).map((x, i) => i+1)
   }
 
@@ -36,8 +39,11 @@ export class GridListComponent {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(SearchModalComponent)
+    this.apiClient.getPlayers().subscribe((data: any) => {
+        console.log(data)
+    }) 
     dialogRef.afterClosed().subscribe(() => {
-      console.log('The dialog was closed');
+           
     });
   }
   
