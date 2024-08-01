@@ -12,6 +12,6 @@ export class ApiClientService {
     }
     // TODO: type this
     getPlayers(): any {
-        return this.http.get(`http://localhost:8000/api/players`)
+        return this.http.get(`http://localhost:8000/api/drivers`)
     }
 }

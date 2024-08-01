@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import PlayerList
+from .views import PlayerList, DriverList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/players', PlayerList.as_view())
+    path('api/players', PlayerList.as_view()),
+    path('api/drivers', DriverList.as_view())
 ]   

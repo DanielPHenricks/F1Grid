@@ -1,8 +1,13 @@
-<h2 mat-dialog-title>Search</h2>
+<h2 mat-dialog-title>Search Drivers</h2>
 <mat-dialog-content>
   <mat-form-field appearance="fill">
-    <mat-label>Search</mat-label>
-    <input matInput [(ngModel)]="searchQuery">
+    <mat-label>Search Driver List</mat-label>
+    <input matInput [formControl]="searchQuery" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+        {{option}}
+      </mat-option>
+    </mat-autocomplete>
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
