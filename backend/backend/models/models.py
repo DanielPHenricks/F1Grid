@@ -9,3 +9,10 @@ class Driver(models.Model):
     forename = models.CharField(max_length=100, blank=False)
     surname = models.CharField(max_length=100, blank=False)
     nationality = models.CharField(max_length=100, blank=False)
+
+class Result(models.Model):
+    result_id = models.IntegerField()
+    race_id = models.IntegerField()
+    driver_id = models.IntegerField()
+    constructor_id = models.IntegerField()
+    position_text = models.CharField(max_length=50)
