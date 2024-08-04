@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ApiClientService } from '../../services/api-client.service';
+import { Driver } from '../../types/driver';
 
 @Component({
   selector: 'app-search-modal',
@@ -33,31 +34,48 @@ import { ApiClientService } from '../../services/api-client.service';
 })
 
 export class SearchModalComponent implements OnInit {
-  searchQuery = new FormControl('')
-  driverOptions: Set<string>;
-  filteredOptions?: Observable<string[]>;
+  searchQuery = new FormControl()
+  driverOptions: Set<Driver>;
+  filteredOptions?: Observable<Driver[]>;
   api: ApiClientService
 
   constructor(public dialogRef: MatDialogRef<SearchModalComponent>, api: ApiClientService) {
     this.api = api;
-    this.driverOptions = new Set<string>;
+    this.driverOptions = new Set<Driver>;
   }
 
   ngOnInit() {
     this.filteredOptions = this.searchQuery.valueChanges.pipe(
       startWith(''),
+      map(value => typeof value === 'string' ? value : value?.forename + ' ' + value?.surname),
       map(value => this._filter(value || ''))
     );
-    this.api.getPlayers().subscribe((data: any) => {
-      data.forEach((elem: any) => {
-        this.driverOptions.add(elem.forename + " " + elem.surname)
+    this.api.getPlayers().subscribe((data: Driver[]) => {
+      data.forEach((elem: Driver) => {
+        this.driverOptions.add(elem)
       });
     })
   }
-
-  private _filter(value: string): string[] {
+  // Maps drivers to strings
+  displayMapping(driver: Driver): string{
+    return driver && driver.forename && driver.surname 
+    ? `${driver.forename} ${driver.surname}` 
+    : ''
+  }
+  
+  // Use a Map to only display unique drivers from autocomplete.
+  private _filter(value: string): Driver[] {
     const filterValue = value.toLowerCase();
-    return [...this.driverOptions].filter((option: string) => option.toLowerCase().includes(filterValue));
+    const uniqueDrivers = new Map<string, Driver>();
+    
+    [...this.driverOptions].forEach((option: Driver) => {
+      const driverName = `${option.forename} ${option.surname}`.toLowerCase();
+      if (driverName.includes(filterValue)) {
+        uniqueDrivers.set(driverName, option);
+      }
+    });
+    // Returns the value set of the drivers and maps it back to an array.
+    return Array.from(uniqueDrivers.values()); 
   }
 
   onCancel(): void {
