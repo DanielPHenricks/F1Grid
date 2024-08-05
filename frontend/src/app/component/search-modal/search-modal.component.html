@@ -3,14 +3,14 @@
   <mat-form-field appearance="fill">
     <mat-label>Search Driver List</mat-label>
     <input matInput [formControl]="searchQuery" [matAutocomplete]="auto">
-    <mat-autocomplete #auto="matAutocomplete">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayMapping">
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-        {{option}}
+        {{option.forename + " " + option.surname}}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onSearch()">Search</button>
+  <button mat-button (click)="onSearch()">Submit Guess</button>
 </mat-dialog-actions>

@@ -1,1 +1,1 @@
-from .models import Player, Driver
+from .models import Player, Driver, Result

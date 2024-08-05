@@ -4,6 +4,8 @@ import { SearchModalComponent } from "../search-modal/search-modal.component";
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { ApiClientService } from '../../services/api-client.service';
+import { Driver } from '../../types/driver';
+import { GridItem } from '../../types/grid_item';
 
 @Component({
   selector: 'grid-list',
@@ -21,29 +23,35 @@ export class GridListComponent {
 
   isSelected: boolean = false
   selectedSquare: number = 0
-  gridNumbers: number[] = []
+  
+  gridNumbers: GridItem[] = [];
   dialog: any = inject(MatDialog)
   readonly apiClient: ApiClientService
 
   public constructor(api: ApiClientService) {
-    this.apiClient = api
-    this.gridNumbers = Array.from({length:9}).map((x, i) => i+1)
+    this.apiClient = api;
+    this.gridNumbers = Array.from({length: 9}, (_, i) => ({ number: i + 1 }));
   }
 
   squareClick(id: number): void {
     console.log("Square " + id + " was clicked.")
     this.selectedSquare = id
     this.isSelected = true
-    this.openDialog()
+    this.openDialog(id)
   }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(SearchModalComponent)
-    this.apiClient.getPlayers().subscribe((data: any) => {
-        console.log(data)
-    }) 
-    dialogRef.afterClosed().subscribe(() => {
-           
+  openDialog(id: number): void {
+    const dialogRef = this.dialog.open(SearchModalComponent);
+    dialogRef.afterClosed().subscribe((driver: Driver) => {
+      if (driver) {
+        const index = this.gridNumbers.findIndex(item => item.number === id);
+        if (index !== -1) {
+          this.gridNumbers[index].driverName = `${driver.forename} ${driver.surname}`;
+        }
+        this.apiClient.getResults(driver).subscribe((res: any) => {
+          console.log(res);
+        });
+      }
     });
   }
   
