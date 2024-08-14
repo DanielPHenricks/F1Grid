@@ -1,8 +1,15 @@
 <div class="grid-container">
-    <mat-grid-list cols="3" rowHeight="1:1">
+    <mat-grid-list cols="4" rowHeight="1:1">
         @for (item of gridNumbers; track $index) {
-            <mat-grid-tile (click)="squareClick(item.number)">
-                {{item.driverName || item.number}}
+            <mat-grid-tile 
+                [class.filter-tile]="item.isFilter"
+                (click)="item.isFilter ? applyFilter(item) : squareClick(item.number)"
+            >
+                @if (item.isFilter) {
+                    {{item.filterCriteria}}
+                } @else {
+                    {{item.driverName || item.number}}
+                }
             </mat-grid-tile>
         }
     </mat-grid-list>

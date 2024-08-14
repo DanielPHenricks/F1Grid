@@ -30,7 +30,18 @@ export class GridListComponent {
 
   public constructor(api: ApiClientService) {
     this.apiClient = api;
-    this.gridNumbers = Array.from({length: 9}, (_, i) => ({ number: i + 1 }));
+    this.gridNumbers = [
+      { number: 0, isFilter: true, filterCriteria: '' },
+      { number: 0, isFilter: true, filterCriteria: 'Has won a race' },
+      { number: 0, isFilter: true, filterCriteria: 'Podium finish' },
+      { number: 0, isFilter: true, filterCriteria: 'Pole position' },
+      { number: 0, isFilter: true, filterCriteria: 'Fastest lap' },
+      ...Array.from({length: 3}, (_, i) => ({ number: i + 1 })),
+      { number: 0, isFilter: true, filterCriteria: 'Drove for Ferrari'},
+      ...Array.from({length: 3}, (_, i) => ({ number: i + 4 })),
+      { number: 0, isFilter: true, filterCriteria: 'Drove for Mercedes'},
+      ...Array.from({length: 3}, (_, i) => ({ number: i + 7 })),
+    ];
   }
 
   squareClick(id: number): void {
@@ -54,5 +65,9 @@ export class GridListComponent {
       }
     });
   }
-  
+  applyFilter(filterItem: GridItem): void {
+    console.log(`Filter applied: ${filterItem.filterCriteria}`);
+    // Implement your filter logic here
+  }
 }
+

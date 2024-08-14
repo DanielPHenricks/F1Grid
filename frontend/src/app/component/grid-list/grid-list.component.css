@@ -8,3 +8,8 @@ mat-grid-tile {
     margin-right: auto;
     margin-top: 5vh;
 }
+
+.filter-tile {
+  background-color: #f0f0f0;
+  font-size: 0.8em;
+}
