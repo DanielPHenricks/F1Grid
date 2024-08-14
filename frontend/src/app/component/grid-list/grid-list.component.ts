@@ -5,7 +5,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { ApiClientService } from '../../services/api-client.service';
 import { Driver } from '../../types/driver';
-import { GridItem } from '../../types/grid_item';
+import { GridItem, FilterGridItem, DriverGridItem } from '../../types/grid_item';
 
 @Component({
   selector: 'grid-list',
@@ -24,23 +24,29 @@ export class GridListComponent {
   isSelected: boolean = false
   selectedSquare: number = 0
   
-  gridNumbers: GridItem[] = [];
+  gridItems: GridItem[] = [];
   dialog: any = inject(MatDialog)
   readonly apiClient: ApiClientService
 
   public constructor(api: ApiClientService) {
     this.apiClient = api;
-    this.gridNumbers = [
-      { number: 0, isFilter: true, filterCriteria: '' },
-      { number: 0, isFilter: true, filterCriteria: 'Has won a race' },
-      { number: 0, isFilter: true, filterCriteria: 'Podium finish' },
-      { number: 0, isFilter: true, filterCriteria: 'Pole position' },
-      { number: 0, isFilter: true, filterCriteria: 'Fastest lap' },
-      ...Array.from({length: 3}, (_, i) => ({ number: i + 1 })),
-      { number: 0, isFilter: true, filterCriteria: 'Drove for Ferrari'},
-      ...Array.from({length: 3}, (_, i) => ({ number: i + 4 })),
-      { number: 0, isFilter: true, filterCriteria: 'Drove for Mercedes'},
-      ...Array.from({length: 3}, (_, i) => ({ number: i + 7 })),
+    this.gridItems = [
+      { number: 0, type: 'filter', filterCriteria: '', isRowFilter: false},
+      { number: 1, type: 'filter', filterCriteria: 'Has won a race', isRowFilter: false },
+      { number: 2, type: 'filter', filterCriteria: 'Podium finish', isRowFilter: false  },
+      { number: 3, type: 'filter', filterCriteria: 'Pole position', isRowFilter: false  },
+      { number: 1, type: 'filter', filterCriteria: 'Drove for Mercedes', isRowFilter: true  },
+      { number: 1, type: 'driver', row: 1, column: 1 },
+      { number: 2, type: 'driver', row: 1, column: 2 },
+      { number: 3, type: 'driver', row: 1, column: 3 },
+      { number: 2, type: 'filter', filterCriteria: 'Drove for Ferrari', isRowFilter: true  },
+      { number: 4, type: 'driver', row: 2, column: 1},
+      { number: 5, type: 'driver', row: 2, column: 2},
+      { number: 6, type: 'driver', row: 2, column: 3},
+      { number: 3, type: 'filter', filterCriteria: 'Drove for Red Bull', isRowFilter: true  },
+      { number: 7, type: 'driver', row: 3, column: 1},
+      { number: 8, type: 'driver', row: 3, column: 2},
+      { number: 9, type: 'driver', row: 3, column: 3},
     ];
   }
 
@@ -55,19 +61,20 @@ export class GridListComponent {
     const dialogRef = this.dialog.open(SearchModalComponent);
     dialogRef.afterClosed().subscribe((driver: Driver) => {
       if (driver) {
-        const index = this.gridNumbers.findIndex(item => item.number === id);
+        const index = this.gridItems.findIndex(item => item.number === id && item.type === 'driver');
         if (index !== -1) {
-          this.gridNumbers[index].driverName = `${driver.forename} ${driver.surname}`;
+          const item = this.gridItems[index] as DriverGridItem;
+          const filters = this.gridItems.filter((elem) => elem.type === 'filter')
+          const rowFilter = filters.filter((elem) => elem.isRowFilter && elem.number == item.row)[0].filterCriteria
+          const columnFilter = filters.filter((elem) => !elem.isRowFilter && elem.number == item.column)[0].filterCriteria
+          console.log(rowFilter + " " + columnFilter)
+          item.driverName = `${driver.forename} ${driver.surname}`;
         }
         this.apiClient.getResults(driver).subscribe((res: any) => {
           console.log(res);
         });
       }
     });
-  }
-  applyFilter(filterItem: GridItem): void {
-    console.log(`Filter applied: ${filterItem.filterCriteria}`);
-    // Implement your filter logic here
   }
 }
 
