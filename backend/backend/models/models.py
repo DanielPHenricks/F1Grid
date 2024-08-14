@@ -16,3 +16,9 @@ class Result(models.Model):
     driver_id = models.IntegerField()
     constructor_id = models.IntegerField()
     position_text = models.CharField(max_length=50)
+
+class Constructor(models.Model):
+    constructor_id = models.IntegerField()
+    constructorRef = models.CharField(max_length=100)
+    constructor_name = models.CharField(max_length=100)
+    

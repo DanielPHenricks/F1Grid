@@ -1,6 +1,6 @@
 export interface BaseGridItem {
     number: number;
-    type: 'driver' | 'filter';
+    type: 'driver' | 'filter' | 'blank';
 }
 
 export interface DriverGridItem extends BaseGridItem {
@@ -14,7 +14,14 @@ export interface FilterGridItem extends BaseGridItem {
     type: 'filter';
     filterCriteria: string;
     isRowFilter: boolean;
+    // TODO: add more.
+    typeOfFilter: 'constructor' | 'race_wins' | 'race_podiums';
+    minFilterQuantity?: number
 }
 
-export type GridItem = FilterGridItem | DriverGridItem;
+export interface BlankGridItem extends BaseGridItem {
+    type: 'blank'
+}
+
+export type GridItem = FilterGridItem | DriverGridItem | BlankGridItem;
 

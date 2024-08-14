@@ -7,8 +7,10 @@
             >
                 @if (item.type === 'filter') {
                     {{item.filterCriteria}}
-                } @else {
+                } @else if (item.type === 'driver') {
                     {{item.driverName || item.number}}
+                } @else {
+                    F1 Grid
                 }
             </mat-grid-tile>
         }
