@@ -17,6 +17,7 @@ export interface FilterGridItem extends BaseGridItem {
     // TODO: add more.
     typeOfFilter: 'constructor' | 'race_wins' | 'race_podiums';
     minFilterQuantity?: number
+    constructor_name?: string
 }
 
 export interface BlankGridItem extends BaseGridItem {

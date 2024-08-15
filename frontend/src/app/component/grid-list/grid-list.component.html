@@ -3,7 +3,7 @@
         @for (item of gridItems; track $index) {
             <mat-grid-tile 
                 [class.filter-tile]="item.type === 'filter'"
-                (click)="item.type === 'filter' ? '' : squareClick(item.number)"
+                (click)="item.type === 'driver' ? squareClick(item.number) : ''"
             >
                 @if (item.type === 'filter') {
                     {{item.filterCriteria}}
