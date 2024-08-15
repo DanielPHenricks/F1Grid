@@ -20,4 +20,9 @@ export class ApiClientService {
     getResults(driver: Driver): any {
         return this.http.get(`http://localhost:8000/api/results?driver_id=${driver.driver_id}`)
     }
+
+    // You get the point.
+    getConstuctors(): any {
+        return this.http.get(`http://localhost:8000/api/constructors`)
+    }
 }
