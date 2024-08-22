@@ -8,6 +8,7 @@ import { Driver } from '../../types/driver';
 import { Constructor } from '../../types/constructor';
 import { GridItem, DriverGridItem } from '../../types/grid_item';
 import { Result } from '../../types/result';
+import { ErrorModalComponent } from '../error-modal/error-modal.component';
 
 @Component({
   selector: 'grid-list',
@@ -25,7 +26,9 @@ export class GridListComponent implements OnInit{
 
   isSelected: boolean = false
   selectedSquare: number = 0
-
+  guesses: number = 9
+  
+  guessedDrivers: number[] = []
   gridItems: GridItem[] = [];
   constructors: Constructor[] = [];
   dialog: any = inject(MatDialog)
@@ -67,9 +70,14 @@ export class GridListComponent implements OnInit{
   }
 
   openDialog(id: number): void {
-    const dialogRef = this.dialog.open(SearchModalComponent);
-    dialogRef.afterClosed().subscribe((driver: Driver) => {
-      if (driver) {
+    if(this.guesses <= 0){
+      this.openErrorDialog("Not enough guesses!")
+    }
+    else {
+      const dialogRef = this.dialog.open(SearchModalComponent);
+      dialogRef.afterClosed().subscribe((driver: Driver) => {
+      if (driver && this.guessedDrivers.indexOf(driver.driver_id) === -1) {
+        this.guesses--;
         const index = this.gridItems.findIndex(item => item.number === id && item.type === 'driver');
         if (index !== -1) {
           const item = this.gridItems[index] as DriverGridItem;
@@ -79,13 +87,13 @@ export class GridListComponent implements OnInit{
           
           let rowValidPromise: Promise<boolean> = Promise.resolve(true);
           let columnValidPromise: Promise<boolean> = Promise.resolve(true);
-  
+
           if (rowFilter.typeOfFilter === 'constructor') {
             const matchingConstructor = this.constructors.filter((elem) => elem.constructor_name === rowFilter.constructor_name)[0];
             rowValidPromise = this.checkConstructorValid(driver, matchingConstructor);
           }
           else {
-
+            rowValidPromise = this.checkResultsValid(driver, rowFilter.typeOfFilter, rowFilter.minFilterQuantity || 1)
           }
 
           if (columnFilter.typeOfFilter === 'constructor') {
@@ -93,7 +101,7 @@ export class GridListComponent implements OnInit{
             columnValidPromise = this.checkConstructorValid(driver, matchingConstructor);
           }
           else {
-
+            columnValidPromise = this.checkResultsValid(driver, columnFilter.typeOfFilter, columnFilter.minFilterQuantity || 1)
           }
 
           Promise.all([rowValidPromise, columnValidPromise])
@@ -101,11 +109,16 @@ export class GridListComponent implements OnInit{
               const isValid = rowValid && columnValid; // Both the row and the column must be correct.
               if (isValid) { // Update the driver name in the grid box.
                 item.driverName = `${driver.forename} ${driver.surname}`;
+                this.guessedDrivers.push(driver.driver_id)
               }
             });
         }
       }
+      else {
+        this.openErrorDialog("Already guessed this driver!")
+      }
     });
+    }
   }
 
   /**
@@ -124,6 +137,7 @@ export class GridListComponent implements OnInit{
       });
     });
   }
+
   checkResultsValid(driver: Driver, typeOfFilter: string, minFilterQuantity: number): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
       this.apiClient.getResults(driver).subscribe((res: Result[]) => {
@@ -131,15 +145,25 @@ export class GridListComponent implements OnInit{
         if(typeOfFilter === 'race_wins'){
           resolve(driverRaces.filter((elem) => elem.position_text === "1").length > minFilterQuantity)
         }
-        if(typeOfFilter === 'race_podiums'){
-          resolve(driverRaces.filter((elem) => {
+        else if(typeOfFilter === 'race_podiums'){
+          let filtered = driverRaces.filter((elem) => {
             elem.position_text === "1" ||
             elem.position_text === "2" ||
             elem.position_text === "3"
-        }).length >= minFilterQuantity)
+        })
+        console.log(filtered)
+        resolve(filtered.length >= minFilterQuantity)
         }
       })
     })
   }
+
+  openErrorDialog(message: string): void {
+    this.dialog.open(ErrorModalComponent, {
+      data: {
+        error: message
+      }
+    })
+  } 
 }
 
