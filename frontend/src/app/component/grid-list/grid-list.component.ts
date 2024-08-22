@@ -76,7 +76,7 @@ export class GridListComponent implements OnInit{
     else {
       const dialogRef = this.dialog.open(SearchModalComponent);
       dialogRef.afterClosed().subscribe((driver: Driver) => {
-      if (driver && this.guessedDrivers.indexOf(driver.driver_id) === -1) {
+       if (driver && this.guessedDrivers.indexOf(driver.driver_id) === -1) {
         this.guesses--;
         const index = this.gridItems.findIndex(item => item.number === id && item.type === 'driver');
         if (index !== -1) {
@@ -114,7 +114,7 @@ export class GridListComponent implements OnInit{
             });
         }
       }
-      else {
+      else if(driver !== undefined){
         this.openErrorDialog("Already guessed this driver!")
       }
     });
@@ -146,13 +146,12 @@ export class GridListComponent implements OnInit{
           resolve(driverRaces.filter((elem) => elem.position_text === "1").length > minFilterQuantity)
         }
         else if(typeOfFilter === 'race_podiums'){
-          let filtered = driverRaces.filter((elem) => {
+          let filtered = driverRaces.filter((elem) => 
             elem.position_text === "1" ||
             elem.position_text === "2" ||
             elem.position_text === "3"
-        })
-        console.log(filtered)
-        resolve(filtered.length >= minFilterQuantity)
+          );
+          resolve(filtered.length >= minFilterQuantity)
         }
       })
     })

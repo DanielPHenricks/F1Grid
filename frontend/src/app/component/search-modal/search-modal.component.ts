@@ -1,4 +1,3 @@
-// search-modal.component.ts
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
@@ -12,6 +11,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ApiClientService } from '../../services/api-client.service';
 import { Driver } from '../../types/driver';
+import { ErrorModalComponent } from '../error-modal/error-modal.component';
 
 @Component({
   selector: 'app-search-modal',
@@ -39,7 +39,7 @@ export class SearchModalComponent implements OnInit {
   filteredOptions?: Observable<Driver[]>;
   api: ApiClientService
 
-  constructor(public dialogRef: MatDialogRef<SearchModalComponent>, api: ApiClientService) {
+  constructor(public dialogRef: MatDialogRef<SearchModalComponent>, private dialog: MatDialog, api: ApiClientService) {
     this.api = api;
     this.driverOptions = new Set<Driver>;
   }
@@ -83,6 +83,15 @@ export class SearchModalComponent implements OnInit {
   }
 
   onSearch(): void {
-    this.dialogRef.close(this.searchQuery.value);
+    if (!this.searchQuery.value) {
+      // Open error modal for 'no driver selected'
+      this.dialog.open(ErrorModalComponent, {
+        data: {
+          error: "No driver selected"
+        }
+      });
+    } else {
+      this.dialogRef.close(this.searchQuery.value);
+    }
   }
 }
