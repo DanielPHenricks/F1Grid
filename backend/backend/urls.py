@@ -16,12 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import PlayerList, DriverList, ResultList, ConstructorList
+from .views import PlayerList, DriverList, ResultList, ConstructorList, DriverGuessUpdateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/players', PlayerList.as_view()),
     path('api/drivers', DriverList.as_view()),
     path('api/results', ResultList.as_view()),
-    path('api/constructors', ConstructorList.as_view())
+    path('api/constructors', ConstructorList.as_view()),
+    path('api/driver-guess/<int:driver_id>/', DriverGuessUpdateView.as_view(), name='driver_guess_update'),
+
+
 ]   

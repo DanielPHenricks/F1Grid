@@ -22,3 +22,14 @@ class Constructor(models.Model):
     constructorRef = models.CharField(max_length=100)
     constructor_name = models.CharField(max_length=100)
     
+from django.db import models
+
+class DriverGuess(models.Model):
+    driver_id = models.IntegerField()
+    grid_id = models.IntegerField()
+    field_one = models.CharField(max_length=100)
+    field_two = models.CharField(max_length=100)
+    guess_count = models.IntegerField(default=1)
+    
+    class Meta:
+        unique_together = ('driver_id',)
