@@ -24,7 +24,7 @@ urlpatterns = [
     path('api/drivers', DriverList.as_view()),
     path('api/results', ResultList.as_view()),
     path('api/constructors', ConstructorList.as_view()),
-    path('api/driver-guess/<int:driver_id>/', DriverGuessUpdateView.as_view(), name='driver_guess_update'),
+    path('api/driver-guess/', DriverGuessUpdateView.as_view())
 
 
 ]   

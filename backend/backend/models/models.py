@@ -32,4 +32,4 @@ class DriverGuess(models.Model):
     guess_count = models.IntegerField(default=1)
     
     class Meta:
-        unique_together = ('driver_id',)
+        unique_together = ('driver_id', 'grid_id', 'field_one', 'field_two')
